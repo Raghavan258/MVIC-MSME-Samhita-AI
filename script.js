@@ -292,22 +292,27 @@ document.addEventListener('DOMContentLoaded', () => {
             body: JSON.stringify(data),
             headers: {
                 'Content-Type': 'text/plain;charset=utf-8',
-            }
+            },
+            redirect: 'follow'
         })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
+            .then(response => {
+                console.log('Response status:', response.status, response.url);
+                return response.json();
+            })
+            .then(result => {
+                console.log('Submission result:', result);
+                if (result.status === 'success') {
                     document.getElementById('success-modal').classList.add('active');
                 } else {
-                    alert('There was an error submitting your application. Please try again.');
-                    btnSubmit.innerHTML = 'Submit application';
+                    alert('Submission error from server: ' + result.message);
+                    btnSubmit.innerHTML = 'Submit application <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
                     btnSubmit.disabled = false;
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('There was an error submitting your application. Please try again.');
-                btnSubmit.innerHTML = 'Submit application';
+                console.error('Fetch error:', error);
+                alert('Network error: ' + error.message + '\n\nPlease check the browser console (F12) for details.');
+                btnSubmit.innerHTML = 'Submit application <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
                 btnSubmit.disabled = false;
             });
     });
